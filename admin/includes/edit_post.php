@@ -33,13 +33,17 @@
 					$post_comment_count = $_POST['post_comment_count'];
 				 
 					
-					move_uploaded_file($post_image_temp, "../images/$post_image");
+	move_uploaded_file($post_image_temp, "../images/$post_image");
 	if(empty($post_image)){
 		$query ="SELECT * FROM posts WHERE post_id = $the_post_id ";
 		$select_image = mysqli_query($connection, $query);
 		while($row = mysqli_fetch_assoc($select_post_id)){
+			
 	       $post_image         = $row['post_image'];
 	}
+		if(empty($post_image )){
+				echo "No Picture was selected";
+			}
 }
 					$query = "UPDATE posts SET ";
 					 $query .= "post_category_id  =$post_category_id , ";
@@ -87,7 +91,7 @@
 			$cat_id = $row['cat_id'];
 			$cat_title = $row['cat_title'];
 				 
-  if($cat_id == $post_category_id) {
+  if($cat_id == $post_category_id ) {
 
       
         echo "<option selected value='{$cat_id}'>{$cat_title}</option>";

@@ -23,7 +23,10 @@
                         	<input class="btn btn-primary" type="submit" name="submit" value ="Add Category">
                         	</div>
                         </form>
-           <?php // Update And Include Query
+           
+<!--           Update And Include Query -->
+           <?php 
+						
 if(isset($_GET['edit'])){
 	$cat_id = $_GET['edit'];
 	}
@@ -36,13 +39,15 @@ if(isset($_GET['edit'])){
                     		<tr>
                     			<th>Id </th>
                     			<th> Category Title </th>
+                    			<th> Update  </th>
+                    			<th> Delete </th>
                     		</tr>
                     	</thead>
                     	<tbody><tr>
                 
                     	</tr>
                     	</tbody>
-                //FIND ALL CATEGORIES QUERY    	
+<!--               FIND ALL CATEGORIES QUERY    	-->
 				<?php findAllCategories(); ?>
 				<?php deleteCategory(); ?>
                    </table>

@@ -35,12 +35,35 @@ $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date
          <label for="title">Post Title</label>
           <input type="text" class="form-control" name="post_title">
       </div>
+         
+           <div class="form-group">
+       <label for="categories">Categories</label>
+       <select name="post_category_id" id="">
+  <?php
 
-         <div class="form-group">
-       <label for="category">Category</label>
-     <input type="number" class="form-control" name="post_category_id">
-      
-      </div>
+			$query = "SELECT * FROM categories";
+			$select_categories= mysqli_query($connection, $query);
+				 
+				 confirmQuery($select_categories);
+			while($row = mysqli_fetch_assoc($select_categories)){
+			$cat_id = $row['cat_id'];
+			$cat_title = $row['cat_title'];
+				 
+  if($cat_id == $post_category_id) {
+echo "<option selected value='{$cat_id}'>{$cat_title}</option>";
+ } else {
+
+          echo "<option value='{$cat_id}'>{$cat_title}</option>";
+}
+
+            
+        }
+
+?>
+
+       </select>
+</div>
+     
 
 
        <div class="form-group">
@@ -82,7 +105,7 @@ $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date
           <input type="text" class="form-control" name="post_tag">
       </div>
            <div class="form-group">
-         <label for="post_tag">post comment count</label>
+         <label for="post_tag">Post Comment Count</label>
           <input type="number" class="form-control" name="post_comment_count">
       </div>
       
