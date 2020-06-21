@@ -1,33 +1,40 @@
 
 <?php
+
 if (isset($_POST['create_post'])){
 
         
-	        $post_category_id=$_POST['post_category_id'];
-            $post_title=$_POST['post_title'];
-            $post_author=$_POST['post_author'];
-	        $post_date=date('d-m-y');
-            $post_image=$_FILES['image']['name'];
-            $post_image_temp=$_FILES['image']['tmp_name'];
-    
-       $post_content=$_POST['post_content'];
-            $post_tag=$_POST['post_tag'];
-	          $post_comment_count=$_POST['post_comment_count'];
-             $post_status=$_POST['post_status'];
+	        $post_category_id = escape($_POST['post_category_id']);
+            $post_title       = escape($_POST['post_title']);
+            $post_author      = escape($_POST['post_author']);
+	        $post_date        = escape(date('d-m-y'));
+            $post_image       = escape($_FILES['image']['name']);
+            $post_image_temp  = escape($_FILES['image']['tmp_name']);
+			$post_content     = escape($_POST['post_content']);
+			$post_tag         = escape($_POST['post_tag']);
+            $post_status      = escape($_POST['post_status']);
+	        $post_views_count = 0;	
+	
 move_uploaded_file($post_image_temp, "../images/$post_image");
 	
 	
-$query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tag, post_comment_count, post_status) ";
+$query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date, post_image, post_content, post_tag, post_status, post_views_count ) ";
 
-	$query .=" VALUES ($post_category_id, '$post_title', '$post_author',now(), '$post_image', '$post_content', '$post_tag', $post_comment_count, '$post_status' ) ";
+	$query .=" VALUES ($post_category_id, '$post_title', '$post_author',now(), '$post_image', '$post_content', '$post_tag', '$post_status', $post_views_count ) ";
 	
 	$create_post_query = mysqli_query($connection, $query);
 	
 	 confirmQuery($create_post_query);
 	
+	$the_post_id = mysqli_insert_id($connection);
+	echo "<p class='bg-success'>Post Added.<a href='../post.php?p_id= {$the_post_id}'>View Post</a> or          <a href='post.php'>Edit More Post</a></p>";
+				 header("edit_post.php");
+	
 }
 
 ?>
+
+
     <form action="" method="post" enctype="multipart/form-data">    
      
      
@@ -79,7 +86,6 @@ echo "<option selected value='{$cat_id}'>{$cat_title}</option>";
       
       
 
-<!--
        <div class="form-group">
          <select name="post_status" id="">
              <option value="draft">Post Status</option>
@@ -87,12 +93,21 @@ echo "<option selected value='{$cat_id}'>{$cat_title}</option>";
              <option value="draft">Draft</option>
          </select>
       </div>
--->
       
+<!--
            <div class="form-group">
-       <label for="users">Post Status</label>
-        <input type="text" class="form-control" name="post_status">
-      </div>
+       <label for="post_status"></label>
+       <select name="" id="">
+       	<option value="draft">Select Options</option>
+       	  	<option value="published">Published</option>
+       	  	  	<option value="draft">Draft</option>
+       </select>
+-->
+<!--        <input type="text" class="form-control" name="post_status">-->
+      
+
+      
+<!--      </div>-->
       
       
     <div class="form-group">
@@ -104,15 +119,12 @@ echo "<option selected value='{$cat_id}'>{$cat_title}</option>";
          <label for="post_tag">Post Tags</label>
           <input type="text" class="form-control" name="post_tag">
       </div>
-           <div class="form-group">
-         <label for="post_tag">Post Comment Count</label>
-          <input type="number" class="form-control" name="post_comment_count">
-      </div>
       
       <div class="form-group">
          <label for="post_content">Post Content</label>
          <textarea class="form-control "name="post_content" id="body" cols="30" rows="10">
          </textarea>
+
       </div>
       
       

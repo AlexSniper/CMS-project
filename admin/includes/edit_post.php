@@ -7,8 +7,9 @@
 			if(isset($_GET['p_id'])){
 				$the_post_id =$_GET['p_id'];
 			}
-		   $query = "SELECT * FROM posts WHERE post_id =$the_post_id";
+		   $query = "SELECT * FROM posts WHERE post_id =$the_post_id ";
 			$select_post_id = mysqli_query($connection, $query);
+confirmQuery($select_post_id);
 			while($row = mysqli_fetch_assoc($select_post_id)){
 			$post_id = $row['post_id'];
 					$post_category_id   = $row['post_category_id'];
@@ -17,27 +18,32 @@
 				   	$post_status        = $row['post_status'];
 					$post_image         = $row['post_image'];
 					$post_tag           = $row['post_tag'];
-				    $post_content       = $row['post_content'];
+				    $_post_content      = $row['post_content'];
+			         $post_content = mysqli_real_escape_string($connection, $_post_content);
+				confirmQuery($select_post_id);
 					$post_comment_count = $row['post_comment_count'];
 				    $post_date          = $row['post_date'];
 			}
 				if(isset($_POST['update_post'])) {
-					$post_category_id = $_POST['post_category_id'];
-					$post_title       = $_POST['post_title'];
-					$post_author      = $_POST['post_author'];
-				   	$post_status      = $_POST['post_status'];
-				    $post_image       = $_FILES['image']['name'];
-                    $post_image_temp  = $_FILES['image']['tmp_name'];
-					$post_tag         = $_POST['post_tag'];
-				    $post_content     = $_POST['post_content'];
-					$post_comment_count = $_POST['post_comment_count'];
+					$post_category_id = escape($_POST['post_category_id']);
+					$post_title       = escape($_POST['post_title']);
+					$post_author      = escape($_POST['post_author']);
+				   	$post_status      = escape($_POST['post_status']);
+				    $post_image       = escape($_FILES['image']['name']);
+                    $post_image_temp  = escape($_FILES['image']['tmp_name']);
+					$post_tag         = escape($_POST['post_tag']);
+				    $post_content     = escape($_POST['post_content']);
+					if (empty($_POST['post_comment_count'])){
+					$post_comment_count= escape($_POST['post_comment_count'])=0;
+					}else{$post_comment_count = escape($_POST['post_comment_count']);}
+				
 				 
 					
 	move_uploaded_file($post_image_temp, "../images/$post_image");
 	if(empty($post_image)){
 		$query ="SELECT * FROM posts WHERE post_id = $the_post_id ";
 		$select_image = mysqli_query($connection, $query);
-		while($row = mysqli_fetch_assoc($select_post_id)){
+		while($row = mysqli_fetch_assoc($select_image)){
 			
 	       $post_image         = $row['post_image'];
 	}
@@ -54,13 +60,15 @@
 					 $query .= " post_tag  = '{$post_tag}', ";
 					 $query .= " post_comment_count = {$post_comment_count}, ";
 					 $query .= " post_status  = '{$post_status}' ";
-					 $query .= " WHERE post_id = {$post_id}";
+					 $query .= " WHERE post_id = {$the_post_id}";
 
 
 		
 	$update_post = mysqli_query($connection, $query);
+					
 	
 	 confirmQuery($update_post);
+					echo "<p class='bg-success'>Post Updated.<a href='../post.php?p_id= {$the_post_id}'>View Post</a> or          <a href='post.php'>Edit More Post</a></p>";
 				 header("edit_post.php");
 				}
 
@@ -123,10 +131,25 @@
         <input value="<?php echo $post_author; ?>" type="text" class="form-control" name="post_author">
       </div>
 
+          
+           <div class="form-group">
+         <select name="post_status" id="">
+             <option value="<?php echo $post_status; ?>">Post Status</option>
+             <option value="published">Published</option>
+             <option value="draft">Draft</option>
+         </select>
+      </div>
+      
+          
+    
+    
+<!--
+      </div>
            <div class="form-group">
        <label for="users">Post Status</label>
-        <input value="<?php echo $post_status; ?>" type="text" class="form-control" name="post_status">
-      </div>
+        <input value="" type="text" class="form-control" name="post_status">
+      
+-->
       
       
     <div class="form-group">
@@ -150,6 +173,11 @@
         <?php echo $post_content; ?>
          </textarea>
       </div>
+      
+      
+      
+      
+      
 <div class="form-group">
           <input class="btn btn-primary" type="submit" name="update_post" value="Update Post">
       </div>

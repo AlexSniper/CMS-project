@@ -3,6 +3,30 @@
 <?php include "../includes/db.php"; ?>
  <?php include "function.php"; ?>
  <?php ob_start(); ?>
+  <?php session_start(); ?>
+
+  <?php 
+//if(isset($_SESSION['user_role'])){
+//	if ($_SESSION['user_role'] !== 'admin'){
+//header("Location: ../index.php");
+
+		
+		if((isset($_SESSION['user_role']) && $_SESSION['user_role'] == "admin" || $_SESSION['user_role'] =="subscriber")){
+
+}else{
+    header("Location: ../index.php");
+}
+		
+		
+	
+//	else if(isset($_SESSION['user_role']) !== 'admin'){
+//		header("Location: ../index.php");
+//	}
+	
+
+
+
+?>
 <html lang="en">
 
 <head>
@@ -30,7 +54,12 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    
+     <link href="css/styles.css" rel="stylesheet">
+    
+ <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> <!--   //Google Awesome charts are added here. Second part-->
+<script src="https://cdn.ckeditor.com/ckeditor5/1.0.0-alpha.2/classic/ckeditor.js"></script>
+<script src="ckeditor/ckeditor.js"></script>
 </head>
 
 <body>

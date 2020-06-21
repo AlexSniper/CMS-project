@@ -22,6 +22,7 @@ body {
 }
 
 #page-wrapper {
+
     width: 100%;
     padding: 0;
     background-color: #fff;
@@ -221,4 +222,7 @@ ul.alert-dropdown {
 
 .panel-yellow a:hover {
     color: #df8a13;
+}
+#bulkOptionsContainer{
+	padding: 0px;
 }

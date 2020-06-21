@@ -10,13 +10,24 @@
 
             <!-- Blog Entries Column -->
             <div class="col-md-8">
+                                  
+                                  
+                                  
+                                  
                                    <?php 
+
 					if(isset($_GET['p_id'])){
 					$the_post_id =	$_GET['p_id'];
-					}
+						
+		//This code counts every post visit		
+		$view_query = "UPDATE posts SET post_views_count = post_views_count +1 WHERE post_id = $the_post_id ";
+		$send_query = mysqli_query($connection, $view_query);
+						if(!$send_query){
+							die("query failed");
+						}
 
 					$query = "SELECT * FROM posts WHERE post_id = $the_post_id";
-					$select_all_posts_query= mysqli_query($connection, $query);
+					$select_all_posts_query= mysqli_query($connection, $query );
           
    	
        while($row = mysqli_fetch_assoc($select_all_posts_query)){
@@ -24,7 +35,10 @@
 	       $post_author = $row['post_author'];
 		   $post_date = $row['post_date'];
 		   $post_image = $row['post_image'];
-		   $post_content = $row['post_content'];
+		   $post_content       = $row['post_content'];
+		    $post_views_count       = $row['post_views_count'];
+	
+			       
 		   
 		   
  ?>
@@ -46,27 +60,35 @@
                 <img class="img-responsive" src="images/<?php echo $post_image; ?> " alt="">
                 <hr>
                 <p><?php echo $post_content ?></p>
-                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
 
                 <hr>
-<?php } ?>   
+<?php }
+	} else{
+		header("Location: index.php");			
+					}
+				
+?>   
             
             
                 <!-- Blog Comments -->
                 
                 <?php
 				
-				if(isset($_POST['create_comment'])){
+				if(isset($_POST['create_comment'])){					
 					$the_post_id =	$_GET['p_id'];
 					$comment_email = $_POST['comment_email'];
-					$comment_content = $_POST['comment_content'];
+					$_comment_content = $_POST['comment_content'];
+					$comment_content = mysqli_real_escape_string($connection, $_comment_content);
 					$comment_author = $_POST['comment_author'];
 					$comment_date=date('d-m-y');
 				
-					$query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content, comment_status, comment_date) ";
+					
+					 if (!empty($comment_author) && !empty($comment_content) && !empty($comment_email)) {
+$query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content, comment_status, comment_date) ";
 					
 					
-					$query .=" VALUES ($the_post_id ,'$comment_author','$comment_email','$comment_content','unapproved',now()) ";
+					$query .=" VALUES ($the_post_id ,'$comment_author','$comment_email','$comment_content','approved',now()) ";
 					
 					$create_comment_query = mysqli_query($connection, $query);
 	
@@ -75,11 +97,29 @@
           die("QUERY FAILED ." . mysqli_error($connection));
    
           
-      }else{
-			echo"Query is succesfully created";
-		   }
-				}
+      }$query ="UPDATE posts SET  post_comment_count = post_comment_count +1 ";
+					$query .= "WHERE post_id = $the_post_id ";
+			$update_comment_count = mysqli_query($connection, $query);
+			
 				
+					 }
+//						elseif(empty($comment_author)){
+//							echo "Author row should be not empty";
+//							
+//						}		
+//					elseif(empty($comment_email)){
+//							echo "Email row should be not empty";
+//							
+//						}	
+//			elseif(empty($comment_content)){
+//							echo "Coment  row should be not empty";
+//							
+//						}
+		else {
+						 echo "<script>alert('Field cannot be empty')</script>";
+					 }
+				}
+
 				
 				?>
 
@@ -109,44 +149,34 @@
 
                 <!-- Posted Comments -->
 
-                <!-- Comment -->
+               
+                <?php 
+	
+	$query = "SELECT * FROM comments WHERE  comment_post_id = $the_post_id ";//Shoving all data from DB 
+				$query .="AND comment_status = 'approved' ";
+				$query .="ORDER BY comment_id DESC ";
+				$select_comments_query= mysqli_query($connection, $query);
+				while($row = mysqli_fetch_assoc($select_comments_query)){
+								$comment_author = $row['comment_author'];
+				            	$comment_content = $row['comment_content'];
+	                            $comment_date = $row['comment_date'];				
+                ?>
+               
+
                 <div class="media">
                     <a class="pull-left" href="#">
                         <img class="media-object" src="http://placehold.it/64x64" alt="">
                     </a>
                     <div class="media-body">
-                        <h4 class="media-heading">Start Bootstrap
-                            <small>August 25, 2014 at 9:30 PM</small>
+                        <h4 class="media-heading"><?php echo $comment_author ?>
+                            <small><?php echo $comment_date ?></small>
                         </h4>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                      <?php echo $comment_content ?>
                     </div>
                 </div>
 
-                <!-- Comment -->
-                <div class="media">
-                    <a class="pull-left" href="#">
-                        <img class="media-object" src="http://placehold.it/64x64" alt="">
-                    </a>
-                    <div class="media-body">
-                        <h4 class="media-heading">Start Bootstrap
-                            <small>August 25, 2014 at 9:30 PM</small>
-                        </h4>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        <!-- Nested Comment -->
-                        <div class="media">
-                            <a class="pull-left" href="#">
-                                <img class="media-object" src="http://placehold.it/64x64" alt="">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading">Nested Start Bootstrap
-                                    <small>August 25, 2014 at 9:30 PM</small>
-                                </h4>
-                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </div>
-                        </div>
-                        <!-- End Nested Comment -->
-                    </div>
-                </div>
+   
+                  <?php }?>
 
 
             

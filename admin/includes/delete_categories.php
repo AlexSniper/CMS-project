@@ -31,14 +31,18 @@
 			 }
 function deleteRows(){
 						if(isset($_GET['delete'])){
-							$the_cat_id = $_GET['delete'];
+						if(isset($_SESSION['user_role'])){
+	                        if($_SESSION['user_role'] == 'admin'){
+							$the_cat_id = escape($_GET['delete']);
 							$query ="DELETE FROM categories WHERE cat_id = {$the_cat_id}";
-							$delete_query= mysqli_query($connection,$query);
-						$delete_query= mysqli_query($connection,$query);
+							$delete_query  = mysqli_query($connection,$query);
+						    $delete_query  = mysqli_query($connection,$query);
 							header("Location: category.php");
+							 }
+							}
+						  }
 						}
-	}
-						?>
+												?>
                    
                 
                     </table>
